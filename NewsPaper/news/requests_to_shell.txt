@@ -1,0 +1,96 @@
+1)
+User.objects.create_user('Name1')
+User.objects.create_user('Name2')
+User_1 = User('Nick')
+User_2 = User('Mary')
+
+2)
+u1=User.objects.get(pk=1)
+Author.objects.create(user=u1)
+u2=User.objects.get(pk=2)
+Author.objects.create(user=u2)
+
+3)
+cat1 = Category.objects.create(name='Sport')
+cat2 = Category.objects.create(name='Education')
+cat3 = Category.objects.create(name='Politic')
+cat4 = Category.objects.create(name='Music')
+
+
+4)
+Post.objects.create(author=Author.objects.get(pk=1), type='ARTI', title='Title1', post_text = 'Text1')
+Post.objects.create(author=Author.objects.get(pk=2), type='NEWS', title='Title2', post_text = 'Text2')
+Post.objects.create(author=Author.objects.get(pk=1), type='ARTI', title='Title3', post_text = 'Text3')
+
+5)
+p1 = Post.objects.get(pk=1)
+c1 = Category.objects.get(pk=1)
+c2 = Category.objects.get(id=2)
+p1.category.add(c1)
+p1.category.add(c2)
+p2 = Post.objects.get(id=2)
+c2 = Category.objects.get(id=2)
+c4 = Category.objects.get(pk=4)
+p2.category.add(c2)
+p2.category.add(c4)
+p3 = Post.objects.get(id=3)
+c3 = Category.objects.get(pk=3)
+p3.category.add(c2)
+p3.category.add(c3)
+
+6)
+Comment.objects.create(post=Post.objects.get(id=1), user=User.objects.get(pk=1), comment_text='CommentText1')
+Comment.objects.create(post=Post.objects.get(id=2), user=User.objects.get(pk=2), comment_text='CommentText2')
+Comment.objects.create(post=Post.objects.get(id=3), user=User.objects.get(pk=1),comment_text='CommentText3')
+Comment.objects.create(post=Post.objects.get(id=3), user=User.objects.get(pk=1),comment_text='CommentText4')
+
+7)
+p1.like()
+p1.like()
+p2.like()
+p2.like()
+p2.dislike()
+p3.like()
+p3.like()
+p3.like()
+p3.like()
+p3.dislike()
+
+com1 = Comment.objects.get(id=1)
+com2 = Comment.objects.get(id=2)
+com3 = Comment.objects.get(id=3)
+com4 = Comment.objects.get(id=4)
+
+com1.like()
+com1.like()
+
+
+com2.like()
+com2.dislike()
+com2.like()
+
+com3.like()
+com3.like()
+com3.like()
+
+com4.like()
+com4.dislike()
+com4.dislike()
+
+8)
+a1 = Author.objects.get(id=1)
+a2 = Author.objects.get(id=2)
+a1.update_rating()
+a2.update_rating()
+
+9)
+Author.objects.all().order_by('-user_rating').values('user__username','user_rating').first()
+
+10)
+Post.objects.order_by('-post_rating').values('post_time_in', 'post_rating', 'title').first()
+Post.objects.order_by('-post_rating').first().author.user
+Post.objects.order_by('-post_rating').first().preview()
+
+11)
+best_post = Post.objects.order_by('-post_rating').first()
+best_post.comment_set.all().values('comment_time_in', 'user__username', 'comment_rating', 'comment_text')
