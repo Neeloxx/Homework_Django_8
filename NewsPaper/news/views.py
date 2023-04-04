@@ -4,6 +4,7 @@ from datetime import datetime
 from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 class PostList(ListView):
@@ -49,10 +50,12 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class NewsCreate(CreateView):
+class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'news_edit.html'
+    permission_required = ('news.create_news',)
+
 
     def form_valid(self, form):
         news = form.save(commit=False)
@@ -60,24 +63,27 @@ class NewsCreate(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdate(UpdateView):
+class NewsUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'news_edit.html'
     queryset = Post.objects.filter(type='NE')
+    permission_required = ('news.update_news',)
 
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'news_delete.html'
     success_url = reverse_lazy('all_news')
     queryset = Post.objects.filter(type='NE')
+    permission_required = ('news.delete_news',)
 
 
-class ArticleCreate(CreateView):
+class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'article_edit.html'
+    permission_required = ('articles.create_article',)
 
     def form_valid(self, form):
         article = form.save(commit=False)
@@ -85,15 +91,17 @@ class ArticleCreate(CreateView):
         return super().form_valid(form)
 
 
-class ArticleUpdate(UpdateView):
+class ArticleUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'article_edit.html'
     queryset = Post.objects.filter(type='AR')
+    permission_required = ('articles.update_article',)
 
 
-class ArticleDelete(DeleteView):
+class ArticleDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'article_delete.html'
     success_url = reverse_lazy('all_news')
     queryset = Post.objects.filter(type='AR')
+    permission_required = ('articles.delete_article',)
