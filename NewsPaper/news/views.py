@@ -1,5 +1,7 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from .models import Post, Category
 from datetime import datetime
 from .filters import PostFilter
 from .forms import PostForm
@@ -105,3 +107,32 @@ class ArticleDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('all_news')
     queryset = Post.objects.filter(type='AR')
     permission_required = ('articles.delete_article',)
+
+
+class CategoryList(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'category_list.html'
+    context_object_name = 'category_news_list'
+    paginate_by = 4
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(category=self.category).order_by('-post_time_in')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_sub'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+
+
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+
+    message = ('You are subscriber now.')
+    return render(request, 'subscribe.html', {'category': category, 'message': message})

@@ -16,6 +16,7 @@ News
        <table>
            <tr>
                <td>Title</td>
+               <td>Category</td>
                <td>Date</td>
                <td>Text</td>
            </tr>
@@ -26,6 +27,11 @@ News
                <td>{{ post.post_time_in|date:'d M Y' }}</td>
                <td>{{ post.post_text|truncatechars:20|censor }}</td>
            </tr>
+           <td>
+               {% for category in post.category.all %}
+                    <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+               {% endfor%}
+           </td>
            {% endfor %}
 
        </table>
