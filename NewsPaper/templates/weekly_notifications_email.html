@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Weekly Notifications</title>
+</head>
+<body>
+    <h1>News for you in the section: {{ category.get_category_name_display }}</h1>
+    <ul>
+    {% for post in posts %}
+        <li>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.preview }}</p>
+            <p>Автор: {{ post.author.user.username }}</p>
+            <p>Рейтинг: {{ post.rating }}</p>
+            <a href="http://{{ link }}:8000/posts/{{ post.pk }}">Прочитай больше</a><br>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

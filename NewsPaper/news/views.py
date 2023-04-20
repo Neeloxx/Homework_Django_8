@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Category
 from datetime import datetime
@@ -7,6 +9,7 @@ from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from .tasks import hello
 
 
 class PostList(ListView):
@@ -136,3 +139,10 @@ def subscribe(request, pk):
 
     message = ('You are subscriber now.')
     return render(request, 'subscribe.html', {'category': category, 'message': message})
+
+
+class HelloView(View):
+
+    def get(self, request):
+        hello.delay()
+        return HttpResponse('Hello!')
