@@ -12,8 +12,6 @@
             <h2>{{ post.title }}</h2>
             <p>{{ post.preview }}</p>
             <p>Автор: {{ post.author.user.username }}</p>
-            <p>Рейтинг: {{ post.rating }}</p>
-            <a href="http://{{ link }}:8000/posts/{{ post.pk }}">Прочитай больше</a><br>
         </li>
     {% endfor %}
     </ul>
