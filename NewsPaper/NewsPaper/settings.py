@@ -17,7 +17,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = 'django-insecure-f@a9@f@dkf3#fo-8l8dcs%wh55p2_8((v*-5yrmrf(epvygr4v
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
-
 
 # Application definition
 
@@ -56,7 +54,6 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,9 +93,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-
 WSGI_APPLICATION = 'NewsPaper.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -109,7 +104,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -129,7 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -140,7 +133,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -185,3 +177,129 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'),
+        # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'style': '{',
+    'formatters': {
+        'console_msg': {
+            'format': '%(asctime)s %(levelname)s %(message)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'warning_msg': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'errors_msg': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'general_log': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'errors_log': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'security_log': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'mail_msg': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_msg',
+        },
+        'warning': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'warning_msg',
+        },
+        'error_hand': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'errors_msg'
+        },
+        'general': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'general_log',
+        },
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+            'formatter': 'errors_log',
+        },
+        'security': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'security.log',
+            'formatter': 'security_log',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'mail_msg',
+        },
+    },
+
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'warning', 'error_hand', 'general'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['mail_admins', 'error'],
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['mail_admins', 'error'],
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['error'],
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['error'],
+            'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['security'],
+            'propagate': True,
+        },
+    },
+}
+
